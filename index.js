@@ -669,13 +669,13 @@ let textObjs = [
   {
     text: "Github",
     size: 24,
-    position: { x: -0.25, y: -0.5 },
+    position: { x: -0.5, y: -0.5 },
   },
 
   {
     text: "Email",
     size: 24,
-    position: { x:  0.25, y: -0.5 },
+    position: { x:  0.5, y: -0.5 },
   },
 
   {
@@ -685,15 +685,90 @@ let textObjs = [
   },
 ]
 
+let currProj = 0
+let projBase = {
+  lines: squareLines,
+  style: "green",
+  position: { x: -2, y: -8.2, z: 1.5 },
+  rotation: { x: 0, y: 0, z: 0 },
+  scale: { x: 1, y: 1, z: 1 },
+
+  onUpdate(delta) {
+    this.position.z = 1.5
+  },
+
+  onMouseOver(delta) {
+    this.position.z = 1.55
+  },
+
+  onMouseUp() {
+    if (portfolioProjs[currProj].link) {
+      window.open(portfolioProjs[currProj].link, '_blank').focus();
+    }
+  }
+}
+
+let portfolioScroll = 0
 let portfolioProjs = [
   {
-    title: "",
-    desc: "",
-    image: null,
-  }
+    title: "Astronaut",
+    desc: "3D game made from scratch with C++ and OpenGL",
+    workedOn: "Rendering, Physics system",
+    image: pAstronaut,
+    link: "https://github.com/CodeForBeauty/AstronautGame",
+  },
+  {
+    title: "Pirates",
+    desc: "Multiplayer game made with Unity",
+    workedOn: "Networking, Game Logic",
+    image: pPirates,
+  },
+  {
+    title: "Life timeline",
+    desc: "Fullstack web app",
+    workedOn: "React frontend, Nestjs backend",
+    image: pTimeline,
+    link: "https://github.com/CodeForBeauty/LifeTimeline",
+  },
+  {
+    title: "Daily question",
+    desc: "Fullstack web app",
+    workedOn: "React frontend, Express backend",
+    image: pQuestion,
+    link: "https://github.com/CodeForBeauty/DailyQuestion",
+  },
+  {
+    title: "Super Ping Pong",
+    desc: "Super Ping Pong remake in Unity",
+    workedOn: "Game logic, Graphics",
+    image: pPingPong,
+  },
+  {
+    title: "Indie Crate",
+    desc: "Game catalogue",
+    workedOn: "React frontend, Data scraping",
+    image: pIndieCrate,
+    link: "https://github.com/CodeForBeauty/IndieCrate",
+  },
+  {
+    title: "Falling sand",
+    desc: "Falling sand simulation",
+    workedOn: "Rendering, Optimization",
+    image: pFallingSand,
+    link: "https://github.com/CodeForBeauty/FallingSand",
+  },
+  {
+    title: "Conways game of life",
+    desc: "Game of life simulation",
+    workedOn: "Rendering, Optimization",
+    image: pGameOfLife,
+    link: "https://github.com/CodeForBeauty/GameOfLife",
+  },
 ]
 
 let selObj = null
+
+// ----------------------------------------------
 
 // Can only multiply square matrices of same size
 function multMat(first, second) {
@@ -778,6 +853,8 @@ function applyTransform(vec, pos, rotMat, scale) {
 function clamp(number, min, max) {
   return Math.min( Math.max( number, min ), max )
 }
+
+// ----------------------------------------------
 
 function draw() {
   const height = window.innerHeight
@@ -871,15 +948,15 @@ function draw() {
     }
   }
 
-  function drawText(textObj, style = "green") {
+  function drawText(textObj, style = "green", maxWidth = width) {
     ctx.fillStyle = style
     ctx.font = `${textObj.size}px serif`
     ctx.textAlign = "center"
 
     ctx.fillText(textObj.text,
-      (textObj.position.x + viewPos.x + 1) / 2 * width,
+      ((textObj.position.x + viewPos.x) * (height / width) + 1) / 2 * width,
       (-textObj.position.y + viewPos.y + 1) / 2 * height,
-      width
+      maxWidth
     )
   }
 
@@ -898,15 +975,67 @@ function draw() {
     }
   }
 
-  selObj = mouseOver
+  if (mouseOver != null || selObj != projBase) {
+    selObj = mouseOver
+  }
 
   for (let i = 0; i < textObjs.length; i++) {
     drawText(textObjs[i])
   }
+
+
+  // Drawing portfolio
+
+  let tmpX = projBase.position.x
+  let overCount = 0
+
+  for (let i = 0; i < portfolioProjs.length; i++) {
+    projBase.onUpdate(0)
+
+    if (selObj == projBase && currProj == i) {
+      projBase.onMouseOver(0)
+    }
+
+    projBase.position.x = tmpX + 1.5 * i + -portfolioScroll;
+    const res = drawObject(projBase)
+    drawText({
+        text: portfolioProjs[i].title,
+        size: 24,
+        position: { x: projBase.position.x / 1.5, y: projBase.position.y - 0.1 },
+      }, "green", 250)
+    drawText({
+        text: portfolioProjs[i].desc,
+        size: 20,
+        position: { x: projBase.position.x / 1.5, y: projBase.position.y - 0.17 },
+      }, "green", 250)
+    drawText({
+        text: `Worked on: ${portfolioProjs[i].workedOn}`,
+        size: 20,
+        position: { x: projBase.position.x / 1.5, y: projBase.position.y - 0.25 },
+      }, "green", 250)
+    
+    ctx.drawImage(portfolioProjs[i].image, 
+      ((projBase.position.x + viewPos.x) * (height / width) / 1.5 - 0.15 + 1) / 2 * width,
+      (-projBase.position.y + viewPos.y - 0.35 + 1) / 2 * height,
+      280, 180
+    )
+
+    if (res.isOver) {
+      selObj = projBase
+      currProj = i
+      overCount++
+    }
+  }
+  if (overCount == 0 && selObj == projBase) {
+    selObj = null
+  }
+  projBase.position.x = tmpX
 }
 
 function update(delta) {
   time += delta
+
+  projBase.onUpdate(delta)
 
   for (let i = 0; i < visObjs.length; i++) {
     visObjs[i].onUpdate(delta)
@@ -940,4 +1069,8 @@ mainCanvas.addEventListener("mouseup", (event) => {
   if (selObj != null && selObj.onMouseUp) {
     selObj.onMouseUp()
   }
+})
+
+mainCanvas.addEventListener("wheel", (event) => {
+  portfolioScroll = clamp(portfolioScroll + event.deltaY / 200, 0, portfolioProjs.length - 1)
 })
