@@ -6,6 +6,13 @@ let viewPos = {
   z: 0,
 }
 
+let targetTime = 0
+let targetPos = {
+  x: 0,
+  y: 0,
+  z: 0,
+}
+
 let viewRot = {
   x: 0,
   y: 0,
@@ -19,71 +26,676 @@ let mousePos = {
 
 let time = 0
 
-let testObj = {
-  lines: [
-    // BOTTOM
-    {
-      start: { x: -0.5, y: -0.5, z: -0.5 },
-      end:   { x:  0.5, y: -0.5, z: -0.5 },
-    },
-    {
-      start: { x:  0.5, y: -0.5, z: -0.5 },
-      end:   { x:  0.5, y: -0.5, z:  0.5 },
-    },
-    {
-      start: { x:  0.5, y: -0.5, z:  0.5 },
-      end:   { x: -0.5, y: -0.5, z:  0.5 },
-    },
-    {
-      start: { x: -0.5, y: -0.5, z:  0.5 },
-      end:   { x: -0.5, y: -0.5, z: -0.5 },
+const cubeLines = [
+  // BOTTOM
+  {
+    start: { x: -0.5, y: -0.5, z: -0.5 },
+    end:   { x:  0.5, y: -0.5, z: -0.5 },
+  },
+  {
+    start: { x:  0.5, y: -0.5, z: -0.5 },
+    end:   { x:  0.5, y: -0.5, z:  0.5 },
+  },
+  {
+    start: { x:  0.5, y: -0.5, z:  0.5 },
+    end:   { x: -0.5, y: -0.5, z:  0.5 },
+  },
+  {
+    start: { x: -0.5, y: -0.5, z:  0.5 },
+    end:   { x: -0.5, y: -0.5, z: -0.5 },
+  },
+
+  // TOP
+  {
+    start: { x: -0.5, y:  0.5, z: -0.5 },
+    end:   { x:  0.5, y:  0.5, z: -0.5 },
+  },
+  {
+    start: { x:  0.5, y:  0.5, z: -0.5 },
+    end:   { x:  0.5, y:  0.5, z:  0.5 },
+  },
+  {
+    start: { x:  0.5, y:  0.5, z:  0.5 },
+    end:   { x: -0.5, y:  0.5, z:  0.5 },
+  },
+  {
+    start: { x: -0.5, y:  0.5, z:  0.5 },
+    end:   { x: -0.5, y:  0.5, z: -0.5 },
+  },
+
+  // SIDES
+  {
+    start: { x: -0.5, y: -0.5, z: -0.5 },
+    end:   { x: -0.5, y:  0.5, z: -0.5 },
+  },
+  {
+    start: { x:  0.5, y: -0.5, z: -0.5 },
+    end:   { x:  0.5, y:  0.5, z: -0.5 },
+  },
+  {
+    start: { x:  0.5, y: -0.5, z:  0.5 },
+    end:   { x:  0.5, y:  0.5, z:  0.5 },
+  },
+  {
+    start: { x: -0.5, y: -0.5, z:  0.5 },
+    end:   { x: -0.5, y:  0.5, z:  0.5 },
+  },
+]
+
+const heartLines = [
+  // Left top
+  {
+    start: { x: -0.4, y:  0.9, z:  0.0 },
+    end:   { x: -0.8, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.9, z:  0.0 },
+    end:   { x:  0.0, y:  0.7, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.9, z:  0.0 },
+    end:   { x: -0.4, y:  0.6, z:  0.3 },
+  },
+  {
+    start: { x: -0.4, y:  0.9, z:  0.0 },
+    end:   { x: -0.4, y:  0.6, z: -0.3 },
+  },
+  {
+    start: { x: -0.4, y:  0.6, z:  0.3 },
+    end:   { x: -0.8, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.6, z: -0.3 },
+    end:   { x: -0.8, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.6, z:  0.3 },
+    end:   { x:  0.0, y:  0.7, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.6, z: -0.3 },
+    end:   { x:  0.0, y:  0.7, z:  0.0 },
+  },
+
+  // Right top
+  {
+    start: { x:  0.4, y:  0.9, z:  0.0 },
+    end:   { x:  0.8, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.9, z:  0.0 },
+    end:   { x:  0.0, y:  0.7, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.9, z:  0.0 },
+    end:   { x:  0.4, y:  0.6, z:  0.3 },
+  },
+  {
+    start: { x:  0.4, y:  0.9, z:  0.0 },
+    end:   { x:  0.4, y:  0.6, z: -0.3 },
+  },
+  {
+    start: { x:  0.4, y:  0.6, z:  0.3 },
+    end:   { x:  0.8, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.6, z: -0.3 },
+    end:   { x:  0.8, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.6, z:  0.3 },
+    end:   { x:  0.0, y:  0.7, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.6, z: -0.3 },
+    end:   { x:  0.0, y:  0.7, z:  0.0 },
+  },
+
+  // Left bottom
+  {
+    start: { x: -0.8, y:  0.6, z:  0.0 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+  {
+    start: { x:  0.0, y:  0.7, z:  0.0 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.6, z:  0.3 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+  {
+    start: { x: -0.4, y:  0.6, z: -0.3 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+
+  // Right bottom
+  {
+    start: { x:  0.8, y:  0.6, z:  0.0 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+  {
+    start: { x:  0.0, y:  0.7, z:  0.0 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.6, z:  0.3 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+  {
+    start: { x:  0.4, y:  0.6, z: -0.3 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+]
+
+const catLines = [
+  // Left
+  {
+    start: { x:  0.0, y:  0.4, z:  0.0 },
+    end:   { x:  0.5, y:  0.3, z:  0.0 },
+  },
+  {
+    start: { x:  0.5, y:  0.3 , z:  0.0 },
+    end:   { x:  0.7, y:  0.15, z:  0.0 },
+  },
+  {
+    start: { x:  0.7, y:  0.15, z:  0.0 },
+    end:   { x:  0.8, y:  0.0 , z:  0.0 },
+  },
+  {
+    start: { x:  0.8, y:  0.0 , z:  0.0 },
+    end:   { x:  0.7, y: -0.15, z:  0.0 },
+  },
+  {
+    start: { x:  0.7, y: -0.15, z:  0.0 },
+    end:   { x:  0.5, y: -0.3 , z:  0.0 },
+  },
+  {
+    start: { x:  0.5, y: -0.3, z:  0.0 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+
+  // Right
+  {
+    start: { x:  0.0, y:  0.4, z:  0.0 },
+    end:   { x: -0.5, y:  0.3, z:  0.0 },
+  },
+  {
+    start: { x: -0.5, y:  0.3 , z:  0.0 },
+    end:   { x: -0.7, y:  0.15, z:  0.0 },
+  },
+  {
+    start: { x: -0.7, y:  0.15, z:  0.0 },
+    end:   { x: -0.8, y:  0.0 , z:  0.0 },
+  },
+  {
+    start: { x: -0.8, y:  0.0 , z:  0.0 },
+    end:   { x: -0.7, y: -0.15, z:  0.0 },
+  },
+  {
+    start: { x: -0.7, y: -0.15, z:  0.0 },
+    end:   { x: -0.5, y: -0.3 , z:  0.0 },
+  },
+  {
+    start: { x: -0.5, y: -0.3, z:  0.0 },
+    end:   { x:  0.0, y: -0.4, z:  0.0 },
+  },
+
+  // Face
+  {
+    start: { x: -0.2, y:  0.1, z:  0.0 },
+    end:   { x: -0.4, y:  0.1, z:  0.0 },
+  },
+  {
+    start: { x:  0.2, y:  0.1, z:  0.0 },
+    end:   { x:  0.4, y:  0.1, z:  0.0 },
+  },
+
+  {
+    start: { x:  0.05, y: -0.05, z:  0.0 },
+    end:   { x:  0.3 , y:  0.0 , z:  0.0 },
+  },
+  {
+    start: { x:  0.05, y: -0.1, z:  0.0 },
+    end:   { x:  0.35, y: -0.1, z:  0.0 },
+  },
+  {
+    start: { x:  0.05, y: -0.15 , z:  0.0 },
+    end:   { x:  0.3 , y: -0.2 , z:  0.0 },
+  },
+
+  {
+    start: { x: -0.05, y: -0.05, z:  0.0 },
+    end:   { x: -0.3 , y:  0.0 , z:  0.0 },
+  },
+  {
+    start: { x: -0.05, y: -0.1, z:  0.0 },
+    end:   { x: -0.35, y: -0.1, z:  0.0 },
+  },
+  {
+    start: { x: -0.05, y: -0.15 , z:  0.0 },
+    end:   { x: -0.3 , y: -0.2 , z:  0.0 },
+  },
+
+  // Ears
+  {
+    start: { x:  0.0, y:  0.4, z:  0.0 },
+    end:   { x:  0.3, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x:  0.5, y:  0.3, z:  0.0 },
+    end:   { x:  0.3, y:  0.6, z:  0.0 },
+  },
+
+  {
+    start: { x:  0.0, y:  0.4, z:  0.0 },
+    end:   { x: -0.3, y:  0.6, z:  0.0 },
+  },
+  {
+    start: { x: -0.5, y:  0.3, z:  0.0 },
+    end:   { x: -0.3, y:  0.6, z:  0.0 },
+  },
+]
+
+const squareLines = [
+  {
+    start: { x: -0.5, y:  0.5, z:  0.0 },
+    end:   { x:  0.5, y:  0.5, z:  0.0 },
+  },
+  {
+    start: { x:  0.5, y:  0.5, z:  0.0 },
+    end:   { x:  0.5, y: -0.5, z:  0.0 },
+  },
+  {
+    start: { x:  0.5, y: -0.5, z:  0.0 },
+    end:   { x: -0.5, y: -0.5, z:  0.0 },
+  },
+  {
+    start: { x: -0.5, y: -0.5, z:  0.0 },
+    end:   { x: -0.5, y:  0.5, z:  0.0 },
+  },
+]
+
+let visObjs = [
+  {
+    lines: cubeLines,
+    style: "green",
+    position: { x: -5, y: -3, z: 4 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 1, z: 1 },
+
+    onUpdate(delta) {
+      this.scale.x = 1 + Math.sin(time * 4) * 0.05
+      this.scale.y = this.scale.x
+      this.scale.z = this.scale.x
     },
 
-    // TOP
-    {
-      start: { x: -0.5, y:  0.5, z: -0.5 },
-      end:   { x:  0.5, y:  0.5, z: -0.5 },
-    },
-    {
-      start: { x:  0.5, y:  0.5, z: -0.5 },
-      end:   { x:  0.5, y:  0.5, z:  0.5 },
-    },
-    {
-      start: { x:  0.5, y:  0.5, z:  0.5 },
-      end:   { x: -0.5, y:  0.5, z:  0.5 },
-    },
-    {
-      start: { x: -0.5, y:  0.5, z:  0.5 },
-      end:   { x: -0.5, y:  0.5, z: -0.5 },
+    onMouseOver(delta) {
+      this.rotation.y += delta * 90
+    }
+  },
+  {
+    lines: cubeLines,
+    style: "green",
+    position: { x: 5, y: -1, z: 5 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 1, z: 1 },
+
+    onUpdate(delta) {
+      this.scale.x = 0.6 + Math.sin(time * 5) * 0.06
+      this.scale.y = this.scale.x
+      this.scale.z = this.scale.x
     },
 
-    // SIDES
-    {
-      start: { x: -0.5, y: -0.5, z: -0.5 },
-      end:   { x: -0.5, y:  0.5, z: -0.5 },
+    onMouseOver(delta) {
+      this.rotation.y += delta * 90
+    }
+  },
+  {
+    lines: heartLines,
+    style: "green",
+    position: { x: -4, y: 2, z: 4 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 1, z: 1 },
+
+    onUpdate(delta) {
+      this.scale.x = 1 + Math.sin(time * 2) * 0.06
+      this.scale.y = this.scale.x
+      this.scale.z = this.scale.x
     },
-    {
-      start: { x:  0.5, y: -0.5, z: -0.5 },
-      end:   { x:  0.5, y:  0.5, z: -0.5 },
+
+    onMouseOver(delta) {
+      this.rotation.y += delta * 90
+    }
+  },
+  {
+    lines: heartLines,
+    style: "green",
+    position: { x: 5, y: 2, z: 3 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 1, z: 1 },
+
+    onUpdate(delta) {
+      this.scale.x = 0.5 + Math.sin(time * 2) * 0.06
+      this.scale.y = this.scale.x
+      this.scale.z = this.scale.x
     },
-    {
-      start: { x:  0.5, y: -0.5, z:  0.5 },
-      end:   { x:  0.5, y:  0.5, z:  0.5 },
+
+    onMouseOver(delta) {
+      this.rotation.y += delta * 90
+    }
+  },
+  // Guy hand
+  {
+    lines: [
+      {
+        start: { x: -0.1, y:  0.0, z:  0.0 },
+        end:   { x:  0.1, y:  0.0, z:  0.0 },
+      },
+      {
+        start: { x:  0.1, y:  0.0, z:  0.0 },
+        end:   { x:  0.0, y:  0.5, z:  0.0 },
+      },
+      {
+        start: { x: -0.1, y:  0.0, z:  0.0 },
+        end:   { x:  0.0, y:  0.5, z:  0.0 },
+      },
+    ],
+    style: "green",
+    position: { x: 0.83, y: -0.75, z: 1 },
+    rotation: { x: 0, y: 0, z: -25 },
+    scale: { x: 0.3, y: 0.3, z: 0.3 },
+
+    onUpdate(delta) {
+      
     },
-    {
-      start: { x: -0.5, y: -0.5, z:  0.5 },
-      end:   { x: -0.5, y:  0.5, z:  0.5 },
+
+    dir: 1,
+
+    onMouseOver(delta) {
+      if (this.rotation.z >= 10) {
+        this.dir = -1
+      }
+      else if (this.rotation.z <= -35) {
+        this.dir = 1
+      }
+      this.rotation.z += delta * this.dir * 360
+    }
+  },
+  // GUY
+  {
+    lines: [
+      {
+        start: { x:  0.25, y:  0.8 , z:  0.0 },
+        end:   { x:  0.0 , y:  0.95, z:  0.0 },
+      },
+      {
+        start: { x: -0.25, y:  0.8 , z:  0.0 },
+        end:   { x:  0.0 , y:  0.95, z:  0.0 },
+      },
+      {
+        start: { x:  0.25, y:  0.8 , z:  0.0 },
+        end:   { x:  0.0 , y:  0.65, z:  0.0 },
+      },
+      {
+        start: { x: -0.25, y:  0.8 , z:  0.0 },
+        end:   { x:  0.0 , y:  0.65, z:  0.0 },
+      },
+
+      {
+        start: { x: -0.25, y:  0.65, z:  0.0 },
+        end:   { x: -0.25, y: -0.5 , z:  0.0 },
+      },
+      {
+        start: { x:  0.25, y:  0.65, z:  0.0 },
+        end:   { x:  0.25, y: -0.5 , z:  0.0 },
+      },
+      {
+        start: { x: -0.25, y:  0.65, z:  0.0 },
+        end:   { x:  0.25, y: 0.65, z:  0.0 },
+      },
+      {
+        start: { x: -0.25, y: -0.5, z:  0.0 },
+        end:   { x:  0.25, y: -0.5, z:  0.0 },
+      },
+    ],
+    style: "green",
+    position: { x: 0.9, y: -0.9, z: 1 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.3, y: 0.3, z: 0.3 },
+
+    onUpdate(delta) {
+      
     },
-  ],
-  style: "green",
-  position: { x: -2, y: -2, z: 5 },
-  rotation: { x: 0, y: 0, z: 0 },
-  scale: { x: 1, y: 1, z: 1 },
-}
+
+    onMouseOver(delta) {
+      visObjs[4].onMouseOver(delta)
+    }
+  },
+
+  {
+    lines: heartLines,
+    style: "green",
+    position: { x: 1, y: -1, z: 4 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+
+    onUpdate(delta) {
+      this.rotation.y += delta * 45
+    },
+
+    time: 1,
+
+    onMouseOver(delta) {
+      this.time += delta
+      this.scale.x = 0.6 + Math.sin(this.time * 2) * 0.06
+      this.scale.y = this.scale.x
+      this.scale.z = this.scale.x
+    }
+  },
+
+  {
+    lines: squareLines,
+    style: "green",
+    position: { x: 0, y: 0, z: 2 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.2, z: 0.5 },
+
+    onUpdate(delta) {
+      this.scale.x = 0.5
+    },
+
+    onMouseOver(delta) {
+      this.scale.x = 0.6
+    },
+
+    onMouseUp() {
+      targetPos.x = 0
+      targetPos.y = -8
+      targetPos.z = 0
+
+      targetTime = 0
+    }
+  },
+
+  // Links
+  // Github
+  {
+    lines: squareLines,
+    style: "green",
+    position: { x: -1, y: -1, z: 2 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.2, z: 0.5 },
+
+    onUpdate(delta) {
+      this.scale.x = 0.5
+    },
+
+    onMouseOver(delta) {
+      this.scale.x = 0.6
+    },
+
+    onMouseUp() {
+      window.open("https://github.com/CodeForBeauty", '_blank').focus();
+    }
+  },
+  // Email
+  {
+    lines: squareLines,
+    style: "green",
+    position: { x: 1, y: -1, z: 2 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.2, z: 0.5 },
+
+    onUpdate(delta) {
+      this.scale.x = 0.5
+    },
+
+    onMouseOver(delta) {
+      this.scale.x = 0.6
+    },
+
+    onMouseUp() {
+      window.open("mailto:nursultanmamatov@proton.me", '_blank').focus();
+    }
+  },
+  // Links ^
+
+  {
+    lines: heartLines,
+    style: "green",
+    position: { x: 5, y: -10, z: 4 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+
+    onUpdate(delta) {
+      this.rotation.y += delta * 90
+    },
+
+    time: 1,
+
+    onMouseOver(delta) {
+      this.rotation.y += delta * 90
+    }
+  },
+  {
+    lines: heartLines,
+    style: "green",
+    position: { x: -5, y: -10, z: 5 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.3, y: 0.3, z: 0.3 },
+
+    onUpdate(delta) {
+      this.rotation.y += delta * 90
+    },
+
+    time: 1,
+
+    onMouseOver(delta) {
+      
+    }
+  },
+
+  {
+    lines: squareLines,
+    style: "green",
+    position: { x: 0, y: -7, z: 2 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.2, z: 0.5 },
+
+    onUpdate(delta) {
+      this.scale.x = 0.5
+    },
+
+    onMouseOver(delta) {
+      this.scale.x = 0.6
+    },
+
+    onMouseUp() {
+      targetPos.x = 0
+      targetPos.y = 0
+      targetPos.z = 0
+
+      targetTime = 0
+    }
+  },
+
+
+  {
+    lines: catLines,
+    style: "green",
+    position: { x: 3, y: -5, z: 4 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 1, z: 1 },
+
+    onUpdate(delta) {
+      this.rotation.z += delta * 90
+    },
+
+    onMouseOver(delta) {
+      
+    }
+  },
+]
+
+let textObjs = [
+  {
+    text: "WELCOME",
+    size: 56,
+    position: { x: 0, y: 0.8 },
+  },
+  {
+    text: "NURSULTAN MAMATOV",
+    size: 32,
+    position: { x: 0, y: 0.65 },
+  },
+  {
+    text: "An ambitious Kyrgyzstan-based freelancer with",
+    size: 24,
+    position: { x: 0, y: 0.58 },
+  },
+  {
+    text: "4 years of experience, specializing in game development.",
+    size: 24,
+    position: { x: 0, y: 0.5 },
+  },
+
+  {
+    text: "Portfolio",
+    size: 24,
+    position: { x: 0, y: 0 },
+  },
+
+  {
+    text: "Github",
+    size: 24,
+    position: { x: -0.25, y: -0.5 },
+  },
+
+  {
+    text: "Email",
+    size: 24,
+    position: { x:  0.25, y: -0.5 },
+  },
+
+  {
+    text: "Main",
+    size: 24,
+    position: { x: 0, y: -7.5 },
+  },
+]
+
+let portfolioProjs = [
+  {
+    title: "",
+    desc: "",
+    image: null,
+  }
+]
 
 let selObj = null
 
-// Can only multiply same size, square matrices
+// Can only multiply square matrices of same size
 function multMat(first, second) {
   let output = structuredClone(first)
 
@@ -168,8 +780,8 @@ function clamp(number, min, max) {
 }
 
 function draw() {
-  const width = window.innerWidth
   const height = window.innerHeight
+  const width = window.innerWidth
 
   mainCanvas.width = width
   mainCanvas.height = height
@@ -251,8 +863,6 @@ function draw() {
         objEnd.z = Math.max(objEnd.z, line.start.z, line.end.z)
       }
     }
-    ctx.strokeStyle = "red"
-    ctx.strokeRect(objStart.x, objStart.y, objEnd.x - objStart.x, objEnd.y - objStart.y)
 
     return {
       isOver: (mousePos.x < objEnd.x && mousePos.x > objStart.x
@@ -261,41 +871,73 @@ function draw() {
     }
   }
 
+  function drawText(textObj, style = "green") {
+    ctx.fillStyle = style
+    ctx.font = `${textObj.size}px serif`
+    ctx.textAlign = "center"
+
+    ctx.fillText(textObj.text,
+      (textObj.position.x + viewPos.x + 1) / 2 * width,
+      (-textObj.position.y + viewPos.y + 1) / 2 * height,
+      width
+    )
+  }
+
   ctx.fillStyle = "black"
   ctx.fillRect(0, 0, width, height)
 
-  const drawRes = drawObject(testObj)
+  let mouseOver = null
+  let closest = 10000
 
-  if (drawRes.isOver) {
-    selObj = testObj
+  for (let i = 0; i < visObjs.length; i++) {
+    const drawRes = drawObject(visObjs[i])
+
+    if (drawRes.isOver && drawRes.z < closest) {
+      closest = drawRes.z
+      mouseOver = visObjs[i]
+    }
   }
-  else {
-    selObj = null
+
+  selObj = mouseOver
+
+  for (let i = 0; i < textObjs.length; i++) {
+    drawText(textObjs[i])
   }
 }
 
 function update(delta) {
   time += delta
-  // testObj.rotation.x += delta * 90
-  // testObj.rotation.x %= 360
 
-  if (selObj === testObj) {
-    testObj.rotation.y += delta * 90
-    testObj.rotation.y %= 360
+  for (let i = 0; i < visObjs.length; i++) {
+    visObjs[i].onUpdate(delta)
   }
-  
-  testObj.position.y = Math.sin(time)
 
-  // viewRot.y += delta * 45
-  // viewRot.y %= 360
+  if (selObj != null) {
+    selObj.onMouseOver(delta)
+  }
+
+  viewPos.x = targetPos.x * targetTime + viewPos.x * (1 - targetTime)
+  viewPos.y = targetPos.y * targetTime + viewPos.y * (1 - targetTime)
+  viewPos.z = targetPos.z * targetTime + viewPos.z * (1 - targetTime)
+
+  targetTime = Math.min(targetTime + delta / 5, 1)
 
   draw()
 }
 
-const deltaTime = 0.05
+const deltaTime = 0.1
 setInterval(() => update(deltaTime), deltaTime * 1000)
 
 mainCanvas.addEventListener("mousemove", (event) => {
   mousePos.x = event.clientX - mainCanvas.offsetLeft
   mousePos.y = event.clientY - mainCanvas.offsetTop
+})
+
+mainCanvas.addEventListener("mouseup", (event) => {
+  mousePos.x = event.clientX - mainCanvas.offsetLeft
+  mousePos.y = event.clientY - mainCanvas.offsetTop
+
+  if (selObj != null && selObj.onMouseUp) {
+    selObj.onMouseUp()
+  }
 })
