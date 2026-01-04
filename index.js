@@ -636,6 +636,39 @@ let visObjs = [
       
     }
   },
+  {
+    lines: catLines,
+    style: "green",
+    position: { x: -5, y: -6, z: 5 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 1, y: 1, z: 1 },
+
+    onUpdate(delta) {
+      this.rotation.y += delta * 45
+      this.rotation.x += delta * 60
+    },
+
+    onMouseOver(delta) {
+      
+    }
+  },
+  {
+    lines: heartLines,
+    style: "green",
+    position: { x: -2, y: -9.5, z: 2 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+
+    startPos: { x: -2, y: -9.5, z: 2 },
+
+    onUpdate(delta) {
+      this.position.y = this.startPos.y + Math.sin(time * 0.5) * 0.2
+    },
+
+    onMouseOver(delta) {
+      this.rotation.z += delta * 45
+    }
+  },
 ]
 
 let textObjs = [
