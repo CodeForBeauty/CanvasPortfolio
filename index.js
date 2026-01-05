@@ -1233,3 +1233,7 @@ mainCanvas.addEventListener("pointerdown", (event) => {
 mainCanvas.addEventListener("wheel", (event) => {
   portfolioScroll = clamp(portfolioScroll + event.deltaY / 200, 0, portfolioProjs.length * 1.3)
 })
+
+console.log("Everything is rendering engine")
+console.log("https://github.com/CodeForBeauty/CanvasPortfolio")
+
