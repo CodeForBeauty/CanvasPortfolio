@@ -570,7 +570,7 @@ let visObjs = [
   {
     lines: squareLines,
     style: "green",
-    position: { x: -1, y: -1, z: 2 },
+    position: { x: -0.4, y: -1, z: 2 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.2, z: 0.5 },
 
@@ -590,7 +590,7 @@ let visObjs = [
   {
     lines: squareLines,
     style: "green",
-    position: { x: 1, y: -1, z: 2 },
+    position: { x: 0.4, y: -1, z: 2 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.2, z: 0.5 },
 
@@ -802,13 +802,13 @@ let textObjs = [
   {
     text: "Github",
     size: 24,
-    position: { x: -0.5, y: -0.5 },
+    position: { x: -0.2, y: -0.5 },
   },
 
   {
     text: "Email",
     size: 24,
-    position: { x:  0.5, y: -0.5 },
+    position: { x:  0.2, y: -0.5 },
   },
 
   {
@@ -816,13 +816,30 @@ let textObjs = [
     size: 24,
     position: { x: 0, y: -7.5 },
   },
+
+  {
+    text: "Scroll",
+    size: 24,
+    position: { x: -1.5, y: -7.7 },
+  },
+  {
+    text: "Swipe",
+    size: 24,
+    position: { x: 0.2, y: -7.7 },
+  },
+
+  {
+    text: "Works best on desktop",
+    size: 24,
+    position: { x: 0.0, y: -0.9 },
+  },
 ]
 
 let currProj = 0
 let projBase = {
   lines: squareLines,
   style: "green",
-  position: { x: -2, y: -8.2, z: 1.5 },
+  position: { x: 0, y: -8.2, z: 1.5 },
   rotation: { x: 0, y: 0, z: 0 },
   scale: { x: 1, y: 1, z: 1 },
 
@@ -1129,7 +1146,7 @@ function draw() {
       projBase.onMouseOver(0)
     }
 
-    projBase.position.x = tmpX + 1.5 * i + -portfolioScroll;
+    projBase.position.x = tmpX + 1.5 * i - portfolioScroll;
     const res = drawObject(projBase)
     drawText({
         text: portfolioProjs[i].title,
@@ -1148,8 +1165,8 @@ function draw() {
       }, "green", 250)
     
     ctx.drawImage(portfolioProjs[i].image, 
-      ((projBase.position.x + viewPos.x) * (height / width) / 1.5 - 0.15 + 1) / 2 * width,
-      (-projBase.position.y + viewPos.y - 0.35 + 1) / 2 * height,
+      ((projBase.position.x / 1.5 + viewPos.x) * (height / width) - (280 / width) + 1) / 2 * width,
+      (-projBase.position.y + viewPos.y - 0.4 + 1) / 2 * height,
       280, 180
     )
 
@@ -1190,12 +1207,18 @@ function update(delta) {
 const deltaTime = 0.1
 setInterval(() => update(deltaTime), deltaTime * 1000)
 
-mainCanvas.addEventListener("mousemove", (event) => {
+mainCanvas.addEventListener("pointermove", (event) => {
   mousePos.x = event.clientX - mainCanvas.offsetLeft
   mousePos.y = event.clientY - mainCanvas.offsetTop
+
+  if (isMouseDown && targetPos.y != 0) {
+    portfolioScroll = clamp(portfolioScroll + -event.movementX / 200, 0, portfolioProjs.length * 1.3)
+  }
 })
 
-mainCanvas.addEventListener("mouseup", (event) => {
+var isMouseDown = false
+mainCanvas.addEventListener("pointerup", (event) => {
+  isMouseDown = false
   mousePos.x = event.clientX - mainCanvas.offsetLeft
   mousePos.y = event.clientY - mainCanvas.offsetTop
 
@@ -1203,7 +1226,10 @@ mainCanvas.addEventListener("mouseup", (event) => {
     selObj.onMouseUp()
   }
 })
+mainCanvas.addEventListener("pointerdown", (event) => {
+  isMouseDown = true
+})
 
 mainCanvas.addEventListener("wheel", (event) => {
-  portfolioScroll = clamp(portfolioScroll + event.deltaY / 200, 0, portfolioProjs.length - 1)
+  portfolioScroll = clamp(portfolioScroll + event.deltaY / 200, 0, portfolioProjs.length * 1.3)
 })
