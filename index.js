@@ -316,6 +316,53 @@ const squareLines = [
   },
 ]
 
+const starLines = [
+  {
+    start: { x:  0.0, y:  0.8, z:  0.0 },
+    end:   { x:  0.3, y:  0.3, z:  0.0 },
+  },
+  {
+    start: { x:  0.0, y:  0.8, z:  0.0 },
+    end:   { x: -0.3, y:  0.3, z:  0.0 },
+  },
+
+  {
+    start: { x:  0.3, y:  0.3, z:  0.0 },
+    end:   { x:  0.8, y:  0.2, z:  0.0 },
+  },
+  {
+    start: { x:  0.8 , y:  0.2, z:  0.0 },
+    end:   { x:  0.35, y: -0.1, z:  0.0 },
+  },
+
+  {
+    start: { x: -0.3, y:  0.3, z:  0.0 },
+    end:   { x: -0.8, y:  0.2, z:  0.0 },
+  },
+  {
+    start: { x: -0.8 , y:  0.2, z:  0.0 },
+    end:   { x: -0.35, y: -0.1, z:  0.0 },
+  },
+
+  {
+    start: { x:  0.35, y: -0.1, z:  0.0 },
+    end:   { x:  0.5 , y: -0.7, z:  0.0 },
+  },
+  {
+    start: { x:  0.5, y: -0.7, z:  0.0 },
+    end:   { x:  0.0, y: -0.3, z:  0.0 },
+  },
+
+  {
+    start: { x: -0.35, y: -0.1, z:  0.0 },
+    end:   { x: -0.5 , y: -0.7, z:  0.0 },
+  },
+  {
+    start: { x: -0.5, y: -0.7, z:  0.0 },
+    end:   { x: -0.0, y: -0.3, z:  0.0 },
+  },
+]
+
 let visObjs = [
   {
     lines: cubeLines,
@@ -667,6 +714,59 @@ let visObjs = [
 
     onMouseOver(delta) {
       this.rotation.z += delta * 45
+    }
+  },
+
+  {
+    lines: starLines,
+    style: "green",
+    position: { x: 0, y: -9.5, z: 3 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+
+    startPos: { x: -2, y: -9.5, z: 2 },
+
+    onUpdate(delta) {
+      
+    },
+
+    onMouseOver(delta) {
+      this.rotation.z += delta * 45
+    }
+  },
+  {
+    lines: starLines,
+    style: "green",
+    position: { x: 4, y: -10.5, z: 3 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+
+    startPos: { x: -2, y: -9.5, z: 2 },
+
+    onUpdate(delta) {
+      this.rotation.x += delta * 45
+    },
+
+    onMouseOver(delta) {
+      this.rotation.x += delta * 45
+    }
+  },
+
+  {
+    lines: starLines,
+    style: "green",
+    position: { x: 5, y: -2.5, z: 3 },
+    rotation: { x: 0, y: 0, z: 0 },
+    scale: { x: 0.5, y: 0.5, z: 0.5 },
+
+    startPos: { x: -2, y: -9.5, z: 2 },
+
+    onUpdate(delta) {
+      this.rotation.y += delta * 45
+    },
+
+    onMouseOver(delta) {
+      this.rotation.x += delta * 45
     }
   },
 ]
