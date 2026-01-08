@@ -771,6 +771,31 @@ let visObjs = [
   },
 ]
 
+let btns = [
+  {
+    obj: visObjs[7],
+  },
+  {
+    obj: visObjs[8],
+  },
+  {
+    obj: visObjs[9],
+  },
+  {
+    obj: visObjs[12],
+  },
+]
+
+for (let i = 0; i < btns.length; i++) {
+  btns[i].btn = document.createElement("button")
+  canvasOverlay.appendChild(btns[i].btn)
+
+  btns[i].btn.style.width = 120
+  btns[i].btn.style.height = 60
+
+  btns[i].btn.addEventListener("click", btns[i].obj.onMouseUp)
+}
+
 let textObjs = [
   {
     text: "WELCOME",
@@ -934,6 +959,14 @@ for (let i = 0; i < portfolioProjs.length; i++) {
   portfolioProjs[i].titleElem = { elem: createTextElem(tmp.title, 24) }
   portfolioProjs[i].descElem = { elem: createTextElem(tmp.desc, 16) }
   portfolioProjs[i].workedOnElem = { elem: createTextElem(tmp.workedOn, 16) }
+
+  const btn = document.createElement("button")
+  btn.addEventListener("click", () => {
+    currProj = i
+    projBase.onMouseUp()
+  })
+  canvasOverlay.appendChild(btn)
+  portfolioProjs[i].btn = btn
 }
 
 let selObj = null
@@ -1198,6 +1231,13 @@ function draw() {
       280, 180
     )
 
+    const pos = project(applyView(projBase.position))
+
+    portfolioProjs[i].btn.style.left = pos.x
+    portfolioProjs[i].btn.style.top = pos.y
+
+    portfolioProjs[i].btn.disabled = pos.x < 0 || pos.y < 0 || pos.x > width || pos.y > height
+
     if (res.isOver) {
       selObj = projBase
       currProj = i
@@ -1208,6 +1248,15 @@ function draw() {
     selObj = null
   }
   projBase.position.x = tmpX
+
+  for (let i = 0; i < btns.length; i++) {
+    const pos = project(applyView(btns[i].obj.position))
+
+    btns[i].btn.disabled = pos.x < 0 || pos.y < 0 || pos.x > width || pos.y > height
+
+    btns[i].btn.style.left = pos.x
+    btns[i].btn.style.top = pos.y
+  }
 }
 
 function update(delta) {
