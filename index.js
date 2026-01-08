@@ -774,15 +774,19 @@ let visObjs = [
 let btns = [
   {
     obj: visObjs[7],
+    label: "Portfolio",
   },
   {
     obj: visObjs[8],
+    label: "Github",
   },
   {
     obj: visObjs[9],
+    label: "Email",
   },
   {
     obj: visObjs[12],
+    label: "Main",
   },
 ]
 
@@ -792,6 +796,8 @@ for (let i = 0; i < btns.length; i++) {
 
   btns[i].btn.style.width = 120
   btns[i].btn.style.height = 60
+
+  btns[i].btn.ariaLabel = btns[i].label
 
   btns[i].btn.addEventListener("click", btns[i].obj.onMouseUp)
 }
@@ -909,6 +915,7 @@ let portfolioProjs = [
     desc: "Multiplayer game made with Unity",
     workedOn: "Networking, Game Logic",
     image: pPirates,
+    link: "https://github.com/CodeForBeauty/PiratesGame",
     featured: true,
   },
   {
@@ -929,6 +936,7 @@ let portfolioProjs = [
     title: "Super Ping Pong",
     desc: "Super Ping Pong remake in Unity",
     workedOn: "Game logic, Graphics",
+    link: "https://github.com/CodeForBeauty/PingPongRemake",
     image: pPingPong,
   },
   {
@@ -961,6 +969,7 @@ for (let i = 0; i < portfolioProjs.length; i++) {
   portfolioProjs[i].workedOnElem = { elem: createTextElem(tmp.workedOn, 16) }
 
   const btn = document.createElement("button")
+  btn.ariaLabel = portfolioProjs[i].title
   btn.addEventListener("click", () => {
     currProj = i
     projBase.onMouseUp()
@@ -1311,6 +1320,15 @@ canvasOverlay.addEventListener("wheel", (event) => {
   portfolioScroll = clamp(portfolioScroll + event.deltaY / 200, 0, portfolioProjs.length * 1.3)
 })
 
-console.log("Everything is rendering engine")
+document.addEventListener("keydown", (event) => {
+  if (event.key == "PageUp") {
+    portfolioScroll = clamp(portfolioScroll + 1, 0, portfolioProjs.length * 1.3)
+  }
+  else if (event.key == "PageDown") {
+    portfolioScroll = clamp(portfolioScroll - 1, 0, portfolioProjs.length * 1.3)
+  }
+})
+
+console.log("One must imagine Sisyphus employed")
 console.log("https://github.com/CodeForBeauty/CanvasPortfolio")
 
