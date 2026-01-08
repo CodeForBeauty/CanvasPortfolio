@@ -611,7 +611,7 @@ let visObjs = [
   {
     lines: heartLines,
     style: "green",
-    position: { x: 5, y: -10, z: 4 },
+    position: { x: 5, y: -12, z: 4 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.5, z: 0.5 },
 
@@ -628,7 +628,7 @@ let visObjs = [
   {
     lines: heartLines,
     style: "green",
-    position: { x: -5, y: -10, z: 5 },
+    position: { x: -5, y: -12, z: 5 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.3, y: 0.3, z: 0.3 },
 
@@ -646,7 +646,7 @@ let visObjs = [
   {
     lines: squareLines,
     style: "green",
-    position: { x: 0, y: -7, z: 2 },
+    position: { x: 0, y: -6.4, z: 2 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.2, z: 0.5 },
 
@@ -702,11 +702,11 @@ let visObjs = [
   {
     lines: heartLines,
     style: "green",
-    position: { x: -2, y: -9.5, z: 2 },
+    position: { x: -2, y: -10.5, z: 2 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.5, z: 0.5 },
 
-    startPos: { x: -2, y: -9.5, z: 2 },
+    startPos: { x: -2, y: -10.5, z: 2 },
 
     onUpdate(delta) {
       this.position.y = this.startPos.y + Math.sin(time * 0.5) * 0.2
@@ -720,7 +720,7 @@ let visObjs = [
   {
     lines: starLines,
     style: "green",
-    position: { x: 0, y: -9.5, z: 3 },
+    position: { x: 0, y: -10.9, z: 3 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.5, z: 0.5 },
 
@@ -737,7 +737,7 @@ let visObjs = [
   {
     lines: starLines,
     style: "green",
-    position: { x: 4, y: -10.5, z: 3 },
+    position: { x: 5, y: -10.5, z: 3 },
     rotation: { x: 0, y: 0, z: 0 },
     scale: { x: 0.5, y: 0.5, z: 0.5 },
 
@@ -783,14 +783,9 @@ let textObjs = [
     position: { x: 0, y: 0.65 },
   },
   {
-    text: "An ambitious Kyrgyzstan-based freelancer with",
+    text: "An ambitious Kyrgyzstan-based freelancer with 4 years of experience, specializing in game development.",
     size: 24,
     position: { x: 0, y: 0.58 },
-  },
-  {
-    text: "4 years of experience, specializing in game development.",
-    size: 24,
-    position: { x: 0, y: 0.5 },
   },
 
   {
@@ -814,18 +809,18 @@ let textObjs = [
   {
     text: "Main",
     size: 24,
-    position: { x: 0, y: -7.5 },
+    position: { x: 0, y: -7.2 },
   },
 
   {
     text: "Scroll",
     size: 24,
-    position: { x: -1.5, y: -7.7 },
+    position: { x: -1.5, y: -8.1 },
   },
   {
     text: "Swipe",
     size: 24,
-    position: { x: 0.2, y: -7.7 },
+    position: { x: 0.2, y: -8.1 },
   },
 
   {
@@ -835,11 +830,27 @@ let textObjs = [
   },
 ]
 
+function createTextElem(text, fontSize) {
+  const tmp = document.createElement("p")
+  tmp.appendChild(document.createTextNode(text))
+  tmp.style = `font-size: ${fontSize}px;`
+
+  canvasOverlay.appendChild(tmp)
+
+  return tmp
+}
+
+for (let i = 0; i < textObjs.length; i++) {
+  const tmp = createTextElem(textObjs[i].text, textObjs[i].size)
+
+  textObjs[i].elem = tmp
+}
+
 let currProj = 0
 let projBase = {
   lines: squareLines,
   style: "green",
-  position: { x: 0, y: -8.2, z: 1.5 },
+  position: { x: 0, y: -8.8, z: 1.5 },
   rotation: { x: 0, y: 0, z: 0 },
   scale: { x: 1, y: 1, z: 1 },
 
@@ -862,16 +873,18 @@ let portfolioScroll = 0
 let portfolioProjs = [
   {
     title: "Astronaut",
-    desc: "3D game made from scratch with C++ and OpenGL",
+    desc: "3D game made from scratch",
     workedOn: "Rendering, Physics system",
     image: pAstronaut,
     link: "https://github.com/CodeForBeauty/AstronautGame",
+    featured: true,
   },
   {
     title: "Pirates",
     desc: "Multiplayer game made with Unity",
     workedOn: "Networking, Game Logic",
     image: pPirates,
+    featured: true,
   },
   {
     title: "Life timeline",
@@ -915,6 +928,13 @@ let portfolioProjs = [
     link: "https://github.com/CodeForBeauty/GameOfLife",
   },
 ]
+
+for (let i = 0; i < portfolioProjs.length; i++) {
+  const tmp = portfolioProjs[i]
+  portfolioProjs[i].titleElem = { elem: createTextElem(tmp.title, 24) }
+  portfolioProjs[i].descElem = { elem: createTextElem(tmp.desc, 16) }
+  portfolioProjs[i].workedOnElem = { elem: createTextElem(tmp.workedOn, 16) }
+}
 
 let selObj = null
 
@@ -1098,16 +1118,19 @@ function draw() {
     }
   }
 
-  function drawText(textObj, style = "green", maxWidth = width) {
-    ctx.fillStyle = style
-    ctx.font = `${textObj.size}px serif`
-    ctx.textAlign = "center"
+  function drawText(textObj, z = 1) {
+    // ctx.fillStyle = style
+    // ctx.font = `${textObj.size}px serif`
+    // ctx.textAlign = "center"
 
-    ctx.fillText(textObj.text,
-      ((textObj.position.x + viewPos.x) * (height / width) + 1) / 2 * width,
-      (-textObj.position.y + viewPos.y + 1) / 2 * height,
-      maxWidth
-    )
+    // ctx.fillText(textObj.text,
+    //   ((textObj.position.x + viewPos.x) * (height / width) + 1) / 2 * width,
+    //   (-textObj.position.y + viewPos.y + 1) / 2 * height,
+    //   maxWidth
+    // )
+
+    textObj.elem.style.left = `${ ((textObj.position.x + viewPos.x) / z * (height / width) + 1) / 2 * width }px`
+    textObj.elem.style.top = `${ ((-textObj.position.y + viewPos.y) / z + 1) / 2 * height }px`
   }
 
   ctx.fillStyle = "black"
@@ -1137,7 +1160,10 @@ function draw() {
   // Drawing portfolio
 
   let tmpX = projBase.position.x
+  let tmpY = projBase.position.y
   let overCount = 0
+
+  let featured = 0
 
   for (let i = 0; i < portfolioProjs.length; i++) {
     projBase.onUpdate(0)
@@ -1146,27 +1172,29 @@ function draw() {
       projBase.onMouseOver(0)
     }
 
-    projBase.position.x = tmpX + 1.5 * i - portfolioScroll;
+    if (portfolioProjs[i].featured) {
+      projBase.position.x = tmpX + 1.5 * featured - portfolioScroll;
+      projBase.position.y = tmpY + 1.2
+      featured++
+    }
+    else {
+      projBase.position.y = tmpY
+      projBase.position.x = tmpX + 1.5 * (i - featured) - portfolioScroll;
+    }
     const res = drawObject(projBase)
-    drawText({
-        text: portfolioProjs[i].title,
-        size: 24,
-        position: { x: projBase.position.x / 1.5, y: projBase.position.y - 0.1 },
-      }, "green", 250)
-    drawText({
-        text: portfolioProjs[i].desc,
-        size: 20,
-        position: { x: projBase.position.x / 1.5, y: projBase.position.y - 0.17 },
-      }, "green", 250)
-    drawText({
-        text: `Worked on: ${portfolioProjs[i].workedOn}`,
-        size: 20,
-        position: { x: projBase.position.x / 1.5, y: projBase.position.y - 0.25 },
-      }, "green", 250)
-    
+
+    portfolioProjs[i].titleElem.position = { x: projBase.position.x, y: projBase.position.y - 0.2 }
+    drawText(portfolioProjs[i].titleElem, projBase.position.z)
+
+    portfolioProjs[i].descElem.position = { x: projBase.position.x, y: projBase.position.y - 0.3 }
+    drawText(portfolioProjs[i].descElem, projBase.position.z)
+
+    portfolioProjs[i].workedOnElem.position = { x: projBase.position.x, y: projBase.position.y - 0.4 }
+    drawText(portfolioProjs[i].workedOnElem, projBase.position.z)
+
     ctx.drawImage(portfolioProjs[i].image, 
-      ((projBase.position.x / 1.5 + viewPos.x) * (height / width) - (280 / width) + 1) / 2 * width,
-      (-projBase.position.y + viewPos.y - 0.4 + 1) / 2 * height,
+      (( projBase.position.x - viewPos.x) / projBase.position.z * (height / width) - (280 / width) + 1) / 2 * width,
+      ((-projBase.position.y + viewPos.y - 0.45) / projBase.position.z + 1) / 2 * height,
       280, 180
     )
 
@@ -1207,7 +1235,7 @@ function update(delta) {
 const deltaTime = 0.1
 setInterval(() => update(deltaTime), deltaTime * 1000)
 
-mainCanvas.addEventListener("pointermove", (event) => {
+canvasOverlay.addEventListener("pointermove", (event) => {
   mousePos.x = event.clientX - mainCanvas.offsetLeft
   mousePos.y = event.clientY - mainCanvas.offsetTop
 
@@ -1217,7 +1245,7 @@ mainCanvas.addEventListener("pointermove", (event) => {
 })
 
 var isMouseDown = false
-mainCanvas.addEventListener("pointerup", (event) => {
+canvasOverlay.addEventListener("pointerup", (event) => {
   isMouseDown = false
   mousePos.x = event.clientX - mainCanvas.offsetLeft
   mousePos.y = event.clientY - mainCanvas.offsetTop
@@ -1226,11 +1254,11 @@ mainCanvas.addEventListener("pointerup", (event) => {
     selObj.onMouseUp()
   }
 })
-mainCanvas.addEventListener("pointerdown", (event) => {
+canvasOverlay.addEventListener("pointerdown", (event) => {
   isMouseDown = true
 })
 
-mainCanvas.addEventListener("wheel", (event) => {
+canvasOverlay.addEventListener("wheel", (event) => {
   portfolioScroll = clamp(portfolioScroll + event.deltaY / 200, 0, portfolioProjs.length * 1.3)
 })
 
