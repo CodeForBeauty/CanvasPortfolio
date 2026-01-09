@@ -814,9 +814,15 @@ let textObjs = [
     position: { x: 0, y: 0.65 },
   },
   {
-    text: "An ambitious Kyrgyzstan-based freelancer with 4 years of experience, specializing in game development.",
+    text: "I'm an ambitious self taught game developer based in Kyrgyzstan. Have been freelancing for past 4 years.",
     size: 24,
     position: { x: 0, y: 0.58 },
+  },
+
+  {
+    text: "My skills: C++, Engine Development, Unity, C#, Networking, Graphics Programming",
+    size: 24,
+    position: { x: 0, y: 0.3 },
   },
 
   {
