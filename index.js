@@ -1337,4 +1337,3 @@ document.addEventListener("keydown", (event) => {
 
 console.log("One must imagine Sisyphus employed")
 console.log("https://github.com/CodeForBeauty/CanvasPortfolio")
-

@@ -46,3 +46,8 @@ button {
   background-color: transparent;
   border: 0;
 }
+
+noscript {
+  position: relative;
+  z-index: 0;
+}
